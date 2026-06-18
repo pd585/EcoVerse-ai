@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ChatInterface } from '@/features/coach';
+import CoachClient from './CoachClient';
 
 export const metadata: Metadata = {
   title: 'AI Coach — EcoVerse AI',
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function CoachPage() {
-  return <ChatInterface />;
+  return <CoachClient />;
 }

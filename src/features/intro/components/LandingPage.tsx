@@ -991,12 +991,12 @@ function ProgressTrace({ progress }: { progress: MotionValue<number> }) {
 }
 
 const cardImageMap: Record<string, string> = {
-  living: '/images/sustainable_living.png',
-  energy: '/images/renewable_energy.png',
-  transit: '/images/smart_transportation.png',
-  circular: '/images/circular_economy.png',
-  cities: '/images/smart_cities.png',
-  nature: '/images/nature_recovery.png',
+  living: '/images/sustainable_living.webp',
+  energy: '/images/renewable_energy.webp',
+  transit: '/images/smart_transportation.webp',
+  circular: '/images/circular_economy.webp',
+  cities: '/images/smart_cities.webp',
+  nature: '/images/nature_recovery.webp',
 };
 
 function BentoTile({

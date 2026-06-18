@@ -28,7 +28,7 @@ export function EcosphereBackground({ particleCount }: EcosphereBackgroundProps)
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: "url('/assests/Ecoverse Bg image/ecoverse-bg-image.png')",
+          backgroundImage: "url('/assests/Ecoverse Bg image/ecoverse-bg-image.webp')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',

@@ -67,7 +67,26 @@ export function MissionTimeline() {
     }
 
     const fetchRoadmapAI = async () => {
-      const invalidateCache = safeGetStorageItem('ecoverse_cache_dirty', false);
+      const cacheKey = `ecoverse_roadmap_ai_${user.id}`;
+      const cached = safeGetStorageItem<any>(cacheKey, null);
+      const isDirty = safeGetStorageItem('ecoverse_cache_dirty', false);
+
+      let shouldRegenerate = true;
+
+      if (cached && !isDirty) {
+        try {
+          const cacheAge = cached.timestamp ? (Date.now() - cached.timestamp) : Infinity;
+          const isExpired = cacheAge >= 24 * 60 * 60 * 1000;
+          if (!isExpired) {
+            shouldRegenerate = false;
+            setAiRoadmap(cached.data);
+            setLoadingAI(false);
+          }
+        } catch (_) {}
+      }
+
+      if (!shouldRegenerate) return;
+
       try {
         const sessionResponse = await supabase.auth.getSession();
         const token = sessionResponse.data.session?.access_token;
@@ -81,7 +100,7 @@ export function MissionTimeline() {
           body: JSON.stringify({
             feature: 'roadmap',
             message: 'Generate personalized roadmap recommendations',
-            invalidateCache,
+            invalidateCache: isDirty,
           }),
         });
 
@@ -89,7 +108,13 @@ export function MissionTimeline() {
           const data = await response.json();
           const parsed = JSON.parse(data.content);
           setAiRoadmap(parsed);
-          if (invalidateCache) {
+          
+          safeSetStorageItem(cacheKey, {
+            timestamp: Date.now(),
+            data: parsed,
+          });
+
+          if (isDirty) {
             try { localStorage.removeItem('ecoverse_cache_dirty'); } catch (_) {}
           }
         }

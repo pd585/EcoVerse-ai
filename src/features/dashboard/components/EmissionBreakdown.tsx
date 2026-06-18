@@ -6,7 +6,7 @@
  * @module features/dashboard/components/EmissionBreakdown
  */
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Info, X } from 'lucide-react';
 import { useAssessmentStore } from '@/store/useAssessmentStore';
@@ -84,7 +84,7 @@ const CATEGORY_STYLES: Record<
   },
 };
 
-export function EmissionBreakdown() {
+export const EmissionBreakdown = memo(function EmissionBreakdown() {
   const [earthTooltipOpen, setEarthTooltipOpen] = useState(false);
   const [activeInsight, setActiveInsight] = useState<string | null>(null);
 
@@ -330,4 +330,4 @@ export function EmissionBreakdown() {
       </AnimatePresence>
     </div>
   );
-}
+});

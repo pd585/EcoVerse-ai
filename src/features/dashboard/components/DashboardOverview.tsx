@@ -6,7 +6,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useRef, memo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Area,
@@ -43,6 +43,9 @@ export function DashboardOverview() {
   const [xp, setXp] = useState(0);
   const [completedLessonsCount, setCompletedLessonsCount] = useState(0);
   const [localUnlocked, setLocalUnlocked] = useState<string[]>([]);
+
+  // Ref to track and prevent concurrent/duplicate AI fetches during hydration/state updates
+  const isFetchingAI = useRef(false);
 
 
   const currentScore = carbonProfile?.carbon_score != null ? Number(carbonProfile.carbon_score) : mockCarbonScore.value;
@@ -138,38 +141,38 @@ export function DashboardOverview() {
     }
   }, [user]);
 
+  // Load roadmap progress and user achievements concurrently in parallel
   useEffect(() => {
     if (!user) return;
 
     setLoadingRoadmap(true);
     setLoadingAchievements(true);
 
-    supabase
-      .from('roadmap_progress')
-      .select('*')
-      .eq('user_id', user.id)
-      .then(({ data, error }) => {
-        if (!error && data) {
-          const completedCount = (data as any[]).filter((d) => d.completed).length;
+    Promise.all([
+      supabase.from('roadmap_progress').select('*').eq('user_id', user.id),
+      supabase.from('user_achievements').select('unlocked_at, achievements(achievement_key)').eq('user_id', user.id)
+    ])
+      .then(([roadmapRes, achievementsRes]) => {
+        if (!roadmapRes.error && roadmapRes.data) {
+          const completedCount = (roadmapRes.data as any[]).filter((d) => d.completed).length;
           setCompletedMissions(completedCount);
           if (completedCount > 0) {
             setStreak(12 + completedCount);
           }
         }
         setLoadingRoadmap(false);
-      });
 
-    supabase
-      .from('user_achievements')
-      .select('unlocked_at, achievements(achievement_key)')
-      .eq('user_id', user.id)
-      .then(({ data, error }) => {
-        if (!error && data) {
-          const keys = (data as any[])
+        if (!achievementsRes.error && achievementsRes.data) {
+          const keys = (achievementsRes.data as any[])
             .map((d: any) => d.achievements?.achievement_key)
             .filter(Boolean);
           setEarnedKeys(keys);
         }
+        setLoadingAchievements(false);
+      })
+      .catch((err) => {
+        console.error('[DashboardOverview] Concurrent data fetch failed:', err);
+        setLoadingRoadmap(false);
         setLoadingAchievements(false);
       });
   }, [user]);
@@ -178,6 +181,8 @@ export function DashboardOverview() {
     if (!user || loadingRoadmap || loadingAchievements) return;
 
     const fetchAIInsights = async () => {
+      if (isFetchingAI.current) return;
+
       const cacheKey = `ecoverse_dashboard_ai_${user.id}`;
       const cached = safeGetStorageItem<any>(cacheKey, null);
       
@@ -211,6 +216,7 @@ export function DashboardOverview() {
       }
 
       try {
+        isFetchingAI.current = true;
         const sessionResponse = await supabase.auth.getSession();
         const token = sessionResponse.data.session?.access_token;
 
@@ -290,6 +296,8 @@ export function DashboardOverview() {
           setAiInsight(prev => prev.includes('Analyzing') ? CARBON_INSIGHT_FALLBACKS[Math.floor(Math.random() * CARBON_INSIGHT_FALLBACKS.length)] : prev);
           setAiTrendSummary(prev => prev.includes('Comparing') ? TREND_SUMMARY_FALLBACKS[Math.floor(Math.random() * TREND_SUMMARY_FALLBACKS.length)] : prev);
         }
+      } finally {
+        isFetchingAI.current = false;
       }
     };
 
@@ -309,30 +317,32 @@ export function DashboardOverview() {
     }
   }
 
-  // Recalculate achievement statuses locally
-  const achievementsList = mockAchievements.map((a) => {
-    const keyMap: Record<string, string> = {
-      'First Steps': 'first_steps',
-      'Car-Free Week': 'car_free_week',
-      'Plant Pioneer': 'plant_pioneer',
-      'Solar Curious': 'solar_curious',
-      'Streak Master': 'streak_master',
-      'Carbon Halver': 'carbon_halver',
-      'First Lesson Completed': 'first_lesson_completed',
-      '5 Lessons Completed': 'five_lessons_completed',
-      '10 Lessons Completed': 'ten_lessons_completed',
-      '25 Lessons Completed': 'twentyfive_lessons_completed',
-      '100 XP Earned': 'xp_100_earned',
-      '250 XP Earned': 'xp_250_earned',
-      '500 XP Earned': 'xp_500_earned',
-    };
-    const dbKey = keyMap[a.name] || a.name.toLowerCase().replace(/ /g, '_');
-    const earned = earnedKeys.includes(dbKey) || localUnlocked.includes(dbKey) || (earnedKeys.length === 0 && a.earned);
-    return { ...a, dbKey, earned };
-  });
+  // Recalculate achievement statuses locally with memoization
+  const achievementsList = useMemo(() => {
+    return mockAchievements.map((a) => {
+      const keyMap: Record<string, string> = {
+        'First Steps': 'first_steps',
+        'Car-Free Week': 'car_free_week',
+        'Plant Pioneer': 'plant_pioneer',
+        'Solar Curious': 'solar_curious',
+        'Streak Master': 'streak_master',
+        'Carbon Halver': 'carbon_halver',
+        'First Lesson Completed': 'first_lesson_completed',
+        '5 Lessons Completed': 'five_lessons_completed',
+        '10 Lessons Completed': 'ten_lessons_completed',
+        '25 Lessons Completed': 'twentyfive_lessons_completed',
+        '100 XP Earned': 'xp_100_earned',
+        '250 XP Earned': 'xp_250_earned',
+        '500 XP Earned': 'xp_500_earned',
+      };
+      const dbKey = keyMap[a.name] || a.name.toLowerCase().replace(/ /g, '_');
+      const earned = earnedKeys.includes(dbKey) || localUnlocked.includes(dbKey) || (earnedKeys.length === 0 && a.earned);
+      return { ...a, dbKey, earned };
+    });
+  }, [earnedKeys, localUnlocked]);
 
-  // Calculate local closest achievement progress
-  const localClosestAchievement = (() => {
+  // Calculate local closest achievement progress with memoization
+  const localClosestAchievement = useMemo(() => {
     const unearned = achievementsList.filter(a => !a.earned);
     if (unearned.length === 0) return null;
 
@@ -388,7 +398,7 @@ export function DashboardOverview() {
     
     candidates.sort((a, b) => b.progressPercentage - a.progressPercentage);
     return candidates[0];
-  })();
+  }, [achievementsList, completedLessonsCount, xp]);
 
   return (
     <AppShell
@@ -640,7 +650,7 @@ export function DashboardOverview() {
 
 // ─── ComparisonBar sub-component ──────────────────────────────────────────────
 
-function ComparisonBar({
+const ComparisonBar = memo(function ComparisonBar({
   label,
   value,
   max,
@@ -675,4 +685,4 @@ function ComparisonBar({
       </div>
     </div>
   );
-}
+});

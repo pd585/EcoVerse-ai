@@ -50,13 +50,17 @@ export function ChatInterface() {
   const [typing, setTyping] = useState(false);
   const [loading, setLoading] = useState(true);
   const endRef = useRef<HTMLDivElement>(null);
+  
+  // Guard references to prevent duplicate loads during mount/hydration
+  const hasLoadedHistory = useRef(false);
 
   // Load chat history from Supabase on mount
   useEffect(() => {
-    if (!user) {
-      setLoading(false);
+    if (!user || hasLoadedHistory.current) {
+      if (!user) setLoading(false);
       return;
     }
+    hasLoadedHistory.current = true;
 
     const localHistoryKey = `ecoverse_coach_history_${user.id}`;
 
@@ -82,7 +86,8 @@ export function ChatInterface() {
 
   const send = async (text: string) => {
     const t = text.trim();
-    if (!t || !user || loading) return;
+    // Guard against empty input, missing user, and concurrent requests/sends
+    if (!t || !user || loading || typing) return;
 
     const localHistoryKey = `ecoverse_coach_history_${user.id}`;
 

@@ -11,6 +11,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ShieldCheck, Mail, Lock } from 'lucide-react';
 import { Brand } from '@/components/layout/Brand';
@@ -308,10 +309,13 @@ export function AuthPage({ mode = 'login' }: AuthPageProps) {
                   backdropFilter: 'blur(2px)',
                 }}
               >
-                <img
-                  src="/images/sustainable_living.png"
+                <Image
+                  src="/images/sustainable_living.webp"
                   alt="Sustainable Living"
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="320px"
+                  priority
+                  className="object-cover"
                   style={{ opacity: 0.82, filter: 'blur(0px) saturate(1.15) brightness(0.88)' }}
                 />
                 <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.08)' }} />
@@ -327,10 +331,13 @@ export function AuthPage({ mode = 'login' }: AuthPageProps) {
                   backdropFilter: 'blur(2px)',
                 }}
               >
-                <img
-                  src="/images/renewable_energy.png"
+                <Image
+                  src="/images/renewable_energy.webp"
                   alt="Renewable Energy"
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="320px"
+                  priority
+                  className="object-cover"
                   style={{ opacity: 0.82, filter: 'blur(0px) saturate(1.15) brightness(0.88)' }}
                 />
                 <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.08)' }} />
@@ -346,10 +353,13 @@ export function AuthPage({ mode = 'login' }: AuthPageProps) {
                   backdropFilter: 'blur(2px)',
                 }}
               >
-                <img
-                  src="/images/nature_recovery.png"
+                <Image
+                  src="/images/nature_recovery.webp"
                   alt="Nature Recovery"
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="320px"
+                  priority
+                  className="object-cover"
                   style={{ opacity: 0.82, filter: 'blur(0px) saturate(1.15) brightness(0.88)' }}
                 />
                 <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.08)' }} />
@@ -365,10 +375,13 @@ export function AuthPage({ mode = 'login' }: AuthPageProps) {
                   backdropFilter: 'blur(2px)',
                 }}
               >
-                <img
-                  src="/images/smart_transportation.png"
+                <Image
+                  src="/images/smart_transportation.webp"
                   alt="Smart Transportation"
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="320px"
+                  priority
+                  className="object-cover"
                   style={{ opacity: 0.82, filter: 'blur(0px) saturate(1.15) brightness(0.88)' }}
                 />
                 <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.08)' }} />

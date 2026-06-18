@@ -34,7 +34,7 @@ export const lessons: Lesson[] = [
       'Includes both direct emissions (like driving) and indirect emissions (like manufacturing goods).',
       'Establishing a baseline helps identify high-leverage areas for carbon reduction.'
     ],
-    coverImage: '/learn/carbon.png',
+    coverImage: '/learn/carbon.webp',
     quiz: {
       question: 'What is the primary measurement unit for a carbon footprint?',
       options: [
@@ -60,7 +60,7 @@ export const lessons: Lesson[] = [
       'Home energy efficiency is highly dependent on fossil fuel electricity grids.',
       'Agricultural emissions are heavily influenced by meat-intensive diets.'
     ],
-    coverImage: '/learn/carbon.png',
+    coverImage: '/learn/carbon.webp',
     quiz: {
       question: 'Which three sectors typically account for the majority of a person\'s carbon footprint?',
       options: [
@@ -86,7 +86,7 @@ export const lessons: Lesson[] = [
       'Global Warming Potential (GWP) measures how much heat a gas traps in the atmosphere.',
       'Allows policymakers to aggregate and target emissions consistently.'
     ],
-    coverImage: '/learn/carbon.png',
+    coverImage: '/learn/carbon.webp',
     quiz: {
       question: 'Why do we use the metric CO₂e instead of just tracking carbon dioxide?',
       options: [
@@ -112,7 +112,7 @@ export const lessons: Lesson[] = [
       'Scope 2: Indirect emissions from purchased energy utilities.',
       'Scope 3: Value chain emissions (supply chain, product lifecycle, commuting).'
     ],
-    coverImage: '/learn/carbon.png',
+    coverImage: '/learn/carbon.webp',
     quiz: {
       question: 'Under which emission category does the electricity purchased to light up an office building fall?',
       options: [
@@ -138,7 +138,7 @@ export const lessons: Lesson[] = [
       'Lifecycle assessments (LCA) trace carbon from raw extraction to disposal.',
       'Choosing local or circular products reduces supply chain carbon bloat.'
     ],
-    coverImage: '/learn/carbon.png',
+    coverImage: '/learn/carbon.webp',
     quiz: {
       question: 'What is a Lifecycle Assessment (LCA)?',
       options: [
@@ -164,7 +164,7 @@ export const lessons: Lesson[] = [
       'Setting milestone goals keeps carbon reduction realistic and manageable.',
       'High-quality offsets should fund certified carbon capture or renewable projects.'
     ],
-    coverImage: '/learn/carbon.png',
+    coverImage: '/learn/carbon.webp',
     quiz: {
       question: 'What is the correct sequence for achieving a personal net-zero carbon goal?',
       options: [
@@ -192,7 +192,7 @@ export const lessons: Lesson[] = [
       'Gases like CO₂ and water vapor act as thermal traps for infrared radiation.',
       'Rising gas concentrations directly correlate with rising global average temperatures.'
     ],
-    coverImage: '/learn/climate.png',
+    coverImage: '/learn/climate.webp',
     quiz: {
       question: 'How do greenhouse gases warm the Earth?',
       options: [
@@ -228,7 +228,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/climate.png'
+    coverImage: '/learn/climate.webp'
   },
   {
     id: 'climate-3',
@@ -254,7 +254,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/climate.png'
+    coverImage: '/learn/climate.webp'
   },
   {
     id: 'climate-4',
@@ -280,7 +280,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/climate.png'
+    coverImage: '/learn/climate.webp'
   },
   {
     id: 'climate-5',
@@ -306,7 +306,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/climate.png'
+    coverImage: '/learn/climate.webp'
   },
   {
     id: 'climate-6',
@@ -332,7 +332,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/climate.png'
+    coverImage: '/learn/climate.webp'
   },
   {
     id: 'climate-7',
@@ -358,7 +358,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/climate.png'
+    coverImage: '/learn/climate.webp'
   },
   {
     id: 'climate-8',
@@ -384,7 +384,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/climate.png'
+    coverImage: '/learn/climate.webp'
   },
 
   // ─── MODULE 3: RENEWABLE ENERGY (7 Lessons) ────────────────────────────────
@@ -412,7 +412,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/renewable.png'
+    coverImage: '/learn/renewable.webp'
   },
   {
     id: 'renewable-2',
@@ -438,7 +438,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/renewable.png'
+    coverImage: '/learn/renewable.webp'
   },
   {
     id: 'renewable-3',
@@ -464,7 +464,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/renewable.png'
+    coverImage: '/learn/renewable.webp'
   },
   {
     id: 'renewable-4',
@@ -490,7 +490,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/renewable.png'
+    coverImage: '/learn/renewable.webp'
   },
   {
     id: 'renewable-5',
@@ -516,7 +516,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/renewable.png'
+    coverImage: '/learn/renewable.webp'
   },
   {
     id: 'renewable-6',
@@ -542,7 +542,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/renewable.png'
+    coverImage: '/learn/renewable.webp'
   },
   {
     id: 'renewable-7',
@@ -568,7 +568,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/renewable.png'
+    coverImage: '/learn/renewable.webp'
   },
 
   // ─── MODULE 4: SUSTAINABLE LIVING (5 Lessons) ──────────────────────────────
@@ -596,7 +596,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/living.png'
+    coverImage: '/learn/living.webp'
   },
   {
     id: 'living-2',
@@ -622,7 +622,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/living.png'
+    coverImage: '/learn/living.webp'
   },
   {
     id: 'living-3',
@@ -651,7 +651,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/living.png'
+    coverImage: '/learn/living.webp'
   },
   {
     id: 'living-4',
@@ -677,7 +677,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/living.png'
+    coverImage: '/learn/living.webp'
   },
   {
     id: 'living-5',
@@ -703,7 +703,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/living.png'
+    coverImage: '/learn/living.webp'
   },
 
   // ─── MODULE 5: GREEN TECHNOLOGY (6 Lessons) ───────────────────────────────
@@ -731,7 +731,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/technology.png'
+    coverImage: '/learn/technology.webp'
   },
   {
     id: 'tech-2',
@@ -757,7 +757,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/technology.png'
+    coverImage: '/learn/technology.webp'
   },
   {
     id: 'tech-3',
@@ -783,7 +783,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/technology.png'
+    coverImage: '/learn/technology.webp'
   },
   {
     id: 'tech-4',
@@ -809,7 +809,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/technology.png'
+    coverImage: '/learn/technology.webp'
   },
   {
     id: 'tech-5',
@@ -835,7 +835,7 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/technology.png'
+    coverImage: '/learn/technology.webp'
   },
   {
     id: 'tech-6',
@@ -861,6 +861,6 @@ export const lessons: Lesson[] = [
       ],
       correctAnswerIndex: 1
     },
-    coverImage: '/learn/technology.png'
+    coverImage: '/learn/technology.webp'
   }
 ];
