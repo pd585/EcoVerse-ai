@@ -38,6 +38,10 @@ function generateReply(input: string): string {
   return 'Every action counts. Swapping commutes, auditing household appliances, and reducing red meat in your diet are all excellent starting points. What sector are you focusing on first?';
 }
 
+function getRandomFallback(): string {
+  return COACH_FALLBACKS[Math.floor(Math.random() * COACH_FALLBACKS.length)];
+}
+
 export function ChatInterface() {
   const { user } = useAuth();
   const [msgs, setMsgs] = useState<Msg[]>([
@@ -57,7 +61,9 @@ export function ChatInterface() {
   // Load chat history from Supabase on mount
   useEffect(() => {
     if (!user || hasLoadedHistory.current) {
-      if (!user) setLoading(false);
+      if (!user) {
+        requestAnimationFrame(() => setLoading(false));
+      }
       return;
     }
     hasLoadedHistory.current = true;
@@ -162,8 +168,7 @@ export function ChatInterface() {
         }
 
         if (!reply) {
-          const randomFallback = COACH_FALLBACKS[Math.floor(Math.random() * COACH_FALLBACKS.length)];
-          reply = randomFallback;
+          reply = getRandomFallback();
         }
       }
 

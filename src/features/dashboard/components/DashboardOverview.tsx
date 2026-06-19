@@ -32,6 +32,7 @@ import { useAuth } from '@/components/layout/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { getDailyEcoTip, getDailyPlanetHealth, CARBON_INSIGHT_FALLBACKS, TREND_SUMMARY_FALLBACKS } from '@/data/daily-data';
 import { safeGetStorageItem, safeSetStorageItem } from '@/lib/storage-safety';
+import { type PersonalityId } from '@/features/assessment/utils/personality';
 
 export function DashboardOverview() {
   const { user, profile, carbonProfile } = useAuth();
@@ -39,19 +40,33 @@ export function DashboardOverview() {
   const [streak, setStreak] = useState(12);
   const [earnedKeys, setEarnedKeys] = useState<string[]>([]);
 
-  // Local storage states
-  const [xp, setXp] = useState(0);
-  const [completedLessonsCount, setCompletedLessonsCount] = useState(0);
-  const [localUnlocked, setLocalUnlocked] = useState<string[]>([]);
+  // Local storage states lazily initialized to avoid setState-in-effect warning
+  const [xp, setXp] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      return safeGetStorageItem('ecoverse_total_xp', 0);
+    }
+    return 0;
+  });
+  const [completedLessonsCount, setCompletedLessonsCount] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      return safeGetStorageItem<string[]>('ecoverse_completed_lessons', []).length;
+    }
+    return 0;
+  });
+  const [localUnlocked, setLocalUnlocked] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      return safeGetStorageItem<string[]>('ecoverse_unlocked_achievements', []);
+    }
+    return [];
+  });
 
   // Ref to track and prevent concurrent/duplicate AI fetches during hydration/state updates
   const isFetchingAI = useRef(false);
 
-
   const currentScore = carbonProfile?.carbon_score != null ? Number(carbonProfile.carbon_score) : mockCarbonScore.value;
   const annualEmissions = carbonProfile?.annual_emissions != null ? Number(carbonProfile.annual_emissions) : mockCarbonScore.value;
   const username = profile?.username || 'Green Guardian';
-  const personality = (profile?.avatar_url as any) || 'greenGuardian';
+  const personality = (profile?.avatar_url as PersonalityId) || 'greenGuardian';
 
   const PERSONALITY_NAMES: Record<string, string> = {
     greenGuardian: 'Green Guardian',
@@ -104,22 +119,23 @@ export function DashboardOverview() {
   const [loadingRoadmap, setLoadingRoadmap] = useState(true);
   const [loadingAchievements, setLoadingAchievements] = useState(true);
 
-  // Load local storage values and rotating lists on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedXp = safeGetStorageItem('ecoverse_total_xp', 0);
-      setXp(storedXp);
-      const storedCompleted = safeGetStorageItem<string[]>('ecoverse_completed_lessons', []);
-      setCompletedLessonsCount(storedCompleted.length);
-      const storedAchievements = safeGetStorageItem<string[]>('ecoverse_unlocked_achievements', []);
-      setLocalUnlocked(storedAchievements);
-    }
-  }, []);
-
   // Compute dynamic levels based on XP
   const calculatedLevel = Math.floor(xp / 100) + 1;
   const xpInCurrentLevel = xp % 100;
   const xpToNextLevel = 100 - xpInCurrentLevel;
+
+  // Helper helper to set state sanitarily (hoisted)
+  function setSanitizedDashboardState(valInsight: string, valTrend: string, parsed: any) {
+    setAiInsight(valInsight);
+    setAiTrendSummary(valTrend);
+    if (parsed.achievementGuidance) setAiAchievementGuidance(parsed.achievementGuidance);
+    if (parsed.recommendations && parsed.recommendations.length > 0) {
+      setAiRecommendations(parsed.recommendations);
+    }
+    if (parsed.closestAchievement) {
+      setAiClosestAchievement(parsed.closestAchievement);
+    }
+  }
 
   // Hydrate cache immediately when user is available
   useEffect(() => {
@@ -145,8 +161,11 @@ export function DashboardOverview() {
   useEffect(() => {
     if (!user) return;
 
-    setLoadingRoadmap(true);
-    setLoadingAchievements(true);
+    // Reset loading state asynchronously to prevent hook warnings
+    requestAnimationFrame(() => {
+      setLoadingRoadmap(true);
+      setLoadingAchievements(true);
+    });
 
     Promise.all([
       supabase.from('roadmap_progress').select('*').eq('user_id', user.id),
@@ -304,18 +323,7 @@ export function DashboardOverview() {
     fetchAIInsights();
   }, [user, currentScore, completedMissions, earnedKeys, loadingRoadmap, loadingAchievements, xp, completedLessonsCount, localUnlocked]);
 
-  // Helper helper to set state sanitarily
-  function setSanitizedDashboardState(valInsight: string, valTrend: string, parsed: any) {
-    setAiInsight(valInsight);
-    setAiTrendSummary(valTrend);
-    if (parsed.achievementGuidance) setAiAchievementGuidance(parsed.achievementGuidance);
-    if (parsed.recommendations && parsed.recommendations.length > 0) {
-      setAiRecommendations(parsed.recommendations);
-    }
-    if (parsed.closestAchievement) {
-      setAiClosestAchievement(parsed.closestAchievement);
-    }
-  }
+
 
   // Recalculate achievement statuses locally with memoization
   const achievementsList = useMemo(() => {

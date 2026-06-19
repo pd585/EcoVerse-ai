@@ -24,6 +24,7 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+        Relationships: [];
         Insert: {
           id: string;
           email: string;
@@ -51,6 +52,7 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+        Relationships: [];
         Insert: {
           id?: string;
           user_id: string;
@@ -80,6 +82,7 @@ export interface Database {
           score_change: number | null;
           created_at: string;
         };
+        Relationships: [];
         Insert: {
           id?: string;
           user_id: string;
@@ -108,6 +111,7 @@ export interface Database {
           progress_percentage: number;
           completed_at: string | null;
         };
+        Relationships: [];
         Insert: {
           id?: string;
           user_id: string;
@@ -134,6 +138,7 @@ export interface Database {
           xp_reward: number;
           created_at: string;
         };
+        Relationships: [];
         Insert: {
           id?: string;
           achievement_key: string;
@@ -158,6 +163,7 @@ export interface Database {
           achievement_id: string;
           unlocked_at: string;
         };
+        Relationships: [];
         Insert: {
           id?: string;
           user_id: string;
@@ -179,6 +185,7 @@ export interface Database {
           coins: number;
           created_at: string;
         };
+        Relationships: [];
         Insert: {
           id?: string;
           user_id: string;
@@ -202,6 +209,7 @@ export interface Database {
           message: string;
           created_at: string;
         };
+        Relationships: [];
         Insert: {
           id?: string;
           user_id: string;

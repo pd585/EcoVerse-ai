@@ -10,15 +10,15 @@ export interface EcoInsightProps {
 }
 
 export function EcoInsight({ message, className }: EcoInsightProps) {
-  const [displayMessage, setDisplayMessage] = useState<string>('Small actions today create a healthier planet for tomorrow.');
+  const [displayMessage, setDisplayMessage] = useState<string>(() => {
+    return message || getDailyEcoTip();
+  });
 
-  useEffect(() => {
-    if (message) {
-      setDisplayMessage(message);
-    } else {
-      setDisplayMessage(getDailyEcoTip());
-    }
-  }, [message]);
+  const [prevMessage, setPrevMessage] = useState<string | undefined>(message);
+  if (message !== prevMessage) {
+    setPrevMessage(message);
+    setDisplayMessage(message || getDailyEcoTip());
+  }
 
   return (
     <div

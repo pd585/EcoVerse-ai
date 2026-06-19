@@ -33,7 +33,7 @@ export const profileService = {
     if (!userId) {
       return { data: null, error: new Error('User ID is required.') };
     }
-    const { data, error } = await (supabase.from('profiles') as any)
+    const { data, error } = await supabase.from('profiles')
       .update(updates)
       .eq('id', userId)
       .select()
@@ -51,24 +51,24 @@ export const profileService = {
 
     try {
       // Query simulator runs count
-      const { count: simulatorCount, error: simulatorError } = await (supabase
-        .from('simulator_runs') as any)
+      const { count: simulatorCount, error: simulatorError } = await supabase
+        .from('simulator_runs')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId);
 
       if (simulatorError) throw simulatorError;
 
       // Query AI conversations count
-      const { count: coachCount, error: coachError } = await (supabase
-        .from('ai_conversations') as any)
+      const { count: coachCount, error: coachError } = await supabase
+        .from('ai_conversations')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId);
 
       if (coachError) throw coachError;
 
       // Query roadmap progress milestones
-      const { data: roadmapData, error: roadmapError } = await (supabase
-        .from('roadmap_progress') as any)
+      const { data: roadmapData, error: roadmapError } = await supabase
+        .from('roadmap_progress')
         .select('completed')
         .eq('user_id', userId);
 
@@ -78,13 +78,13 @@ export const profileService = {
         data: {
           simulatorRuns: simulatorCount || 0,
           coachMessages: coachCount || 0,
-          completedMilestones: (roadmapData as any[])?.filter((r) => r.completed).length || 0,
+          completedMilestones: roadmapData?.filter((r) => r.completed).length || 0,
         },
         error: null,
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching profile stats:', err);
-      return { data: null, error: err };
+      return { data: null, error: err as Error };
     }
   },
 };

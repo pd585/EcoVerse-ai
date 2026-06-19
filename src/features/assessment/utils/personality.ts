@@ -66,7 +66,7 @@ const archetypes = [
       transport: 2,
       energy: 3,
       food: 2,
-      shopping: 2,
+      shopping: 1,
       interest: 3,
     },
   },
@@ -80,7 +80,7 @@ const archetypes = [
     weights: {
       transport: 1,
       energy: 3,
-      food: 1,
+      food: 2,
       shopping: 2,
       interest: 3,
     },
@@ -94,7 +94,7 @@ const archetypes = [
     traits: ['Community-first', 'Supportive', 'Inclusive'] as const,
     weights: {
       transport: 1,
-      energy: 1,
+      energy: 2,
       food: 2,
       shopping: 3,
       interest: 3,

@@ -1,10 +1,13 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { X, Sparkles } from 'lucide-react';
 import { EcosystemWorld } from '@/components/shared/EcosystemWorld';
 import { Counter } from '@/components/ui/Counter';
 import { simulatorScenarios } from '@/data/eco-data';
+import type { Database } from '@/types/database/database.types';
+
+type SimulatorRun = Database['public']['Tables']['simulator_runs']['Row'];
 
 interface SimulationResultsModalProps {
   isOpen: boolean;
@@ -29,7 +32,7 @@ interface SimulationResultsModalProps {
     nextActions: string;
     score: { impact: string; difficulty: string; reduction: string };
   } | null;
-  history: any[];
+  history: SimulatorRun[];
 }
 
 export default function SimulationResultsModal({
@@ -100,7 +103,7 @@ export default function SimulationResultsModal({
                 Planet Under Stress
               </div>
               <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground max-w-[240px] mx-auto italic">
-                "This is where your current habits are leading."
+                &quot;This is where your current habits are leading.&quot;
               </p>
             </div>
           </div>
@@ -121,7 +124,7 @@ export default function SimulationResultsModal({
                   : `Stage ${isStage5 ? 5 : isStage4 ? 4 : isStage3 ? 3 : isStage2 ? 2 : 1} — ${isStage5 ? 'Climate Champion' : isStage4 ? 'Thriving' : isStage3 ? 'Growing' : isStage2 ? 'Recovering' : 'Critical'}`}
               </div>
               <p className="mt-2 text-[11px] leading-relaxed text-accent-cyan/90 font-medium italic max-w-[240px] mx-auto">
-                "{activeNarrative}"
+                &quot;{activeNarrative}&quot;
               </p>
             </div>
           </div>

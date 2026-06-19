@@ -15,15 +15,15 @@ export function PlanetHealth({
   change,
   className,
 }: PlanetHealthProps) {
-  const [displayChange, setDisplayChange] = useState<string>('+18% this year');
+  const [displayChange, setDisplayChange] = useState<string>(() => {
+    return change || getDailyPlanetHealth();
+  });
 
-  useEffect(() => {
-    if (change) {
-      setDisplayChange(change);
-    } else {
-      setDisplayChange(getDailyPlanetHealth());
-    }
-  }, [change]);
+  const [prevChange, setPrevChange] = useState<string | undefined>(change);
+  if (change !== prevChange) {
+    setPrevChange(change);
+    setDisplayChange(change || getDailyPlanetHealth());
+  }
 
   return (
     <div

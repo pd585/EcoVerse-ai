@@ -17,6 +17,7 @@ import { useAuth } from '@/components/layout/AuthProvider';
 import { simulatorService } from '../services/simulator.service';
 import { supabase } from '@/lib/supabase';
 import { safeSetStorageItem } from '@/lib/storage-safety';
+import type { Database } from '@/types/database/database.types';
 
 // Lazy-load SimulationResultsModal to improve initial route bundle size
 const SimulationResultsModal = dynamic(() => import('./SimulationResultsModal'), {
@@ -61,7 +62,7 @@ export function SimulatorPage() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [lastToggled, setLastToggled] = useState<string | null>(null);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<Database['public']['Tables']['simulator_runs']['Row'][]>([]);
 
   const [aiAnalysis, setAiAnalysis] = useState<{
     explanation: string;
@@ -84,7 +85,10 @@ export function SimulatorPage() {
   }, [user]);
 
   useEffect(() => {
-    fetchHistory();
+    const handle = setTimeout(() => {
+      fetchHistory();
+    }, 0);
+    return () => clearTimeout(handle);
   }, [fetchHistory]);
 
   const toggle = (id: string) => {
@@ -92,7 +96,11 @@ export function SimulatorPage() {
     setLastToggled(id);
     setActive((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
     setTimeout(() => {
@@ -152,13 +160,11 @@ export function SimulatorPage() {
     }
   };
 
-  const saved = useMemo(
-    () =>
-      simulatorScenarios
-        .filter((s) => active.has(s.id))
-        .reduce((sum, s) => sum + s.perYear, 0),
-    [active],
-  );
+  const activeKeys = Array.from(active).sort().join(',');
+  const activeList = activeKeys.split(',').filter(Boolean);
+  const saved = simulatorScenarios
+    .filter((s) => activeList.includes(s.id))
+    .reduce((sum, s) => sum + s.perYear, 0);
 
   const improved = Math.max(0, +(baselineScore - saved).toFixed(1));
   const pct = Math.round((saved / baselineScore) * 100);

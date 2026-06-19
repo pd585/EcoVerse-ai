@@ -14,8 +14,7 @@ export const simulatorService = {
     if (!userId) {
       return { data: null, error: new Error('User ID is required.') };
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase.from('simulator_runs') as any)
+    const { data, error } = await supabase.from('simulator_runs')
       .insert({
         user_id: userId,
         scenario_name: scenarioName,
@@ -35,8 +34,7 @@ export const simulatorService = {
     if (!userId) {
       return { data: null, error: new Error('User ID is required.') };
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase.from('simulator_runs') as any)
+    const { data, error } = await supabase.from('simulator_runs')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });

@@ -8,7 +8,7 @@ export const roadmapService = {
     if (!userId) {
       return { data: null, error: new Error('User ID is required.') };
     }
-    const { data, error } = await (supabase.from('roadmap_progress') as any)
+    const { data, error } = await supabase.from('roadmap_progress')
       .select('*')
       .eq('user_id', userId);
     return { data, error };
@@ -28,7 +28,7 @@ export const roadmapService = {
     }
 
     // Check if progress already exists for this user and key
-    const { data: existing, error: findError } = await (supabase.from('roadmap_progress') as any)
+    const { data: existing, error: findError } = await supabase.from('roadmap_progress')
       .select('id')
       .eq('user_id', userId)
       .eq('milestone_key', milestoneKey)
@@ -40,7 +40,7 @@ export const roadmapService = {
 
     if (existing && existing.length > 0) {
       // Update existing record
-      const { data, error } = await (supabase.from('roadmap_progress') as any)
+      const { data, error } = await supabase.from('roadmap_progress')
         .update({
           completed,
           progress_percentage: progressPercentage,
@@ -52,7 +52,7 @@ export const roadmapService = {
       return { data, error };
     } else {
       // Insert new record
-      const { data, error } = await (supabase.from('roadmap_progress') as any)
+      const { data, error } = await supabase.from('roadmap_progress')
         .insert({
           user_id: userId,
           milestone_key: milestoneKey,

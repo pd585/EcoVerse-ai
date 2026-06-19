@@ -119,10 +119,10 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(aiResponse);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error in AI Secure Endpoint handler:', err);
     return NextResponse.json(
-      { error: err.message || 'An error occurred during content generation.' },
+      { error: (err as Error).message || 'An error occurred during content generation.' },
       { status: 500 }
     );
   }

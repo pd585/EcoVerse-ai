@@ -17,17 +17,19 @@ import { safeGetStorageItem, safeSetStorageItem } from '@/lib/storage-safety';
 
 const sections = Object.entries(mockRoadmap) as [string, readonly { task: string; done: boolean }[]][];
 
+export interface AIRoadmapData {
+  nextMission: string;
+  priorityRanking: string;
+  weeklyActionPlan: string;
+  motivationSummary: string;
+  score: { impact: string; difficulty: string; reduction: string };
+}
+
 export function MissionTimeline() {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
-  const [aiRoadmap, setAiRoadmap] = useState<{
-    nextMission: string;
-    priorityRanking: string;
-    weeklyActionPlan: string;
-    motivationSummary: string;
-    score: { impact: string; difficulty: string; reduction: string };
-  } | null>(null);
+  const [aiRoadmap, setAiRoadmap] = useState<AIRoadmapData | null>(null);
   const [loadingAI, setLoadingAI] = useState(true);
 
   // Initialize tasks state with default mockRoadmap values
@@ -49,7 +51,7 @@ export function MissionTimeline() {
     roadmapService.getProgress(user.id).then(({ data, error }) => {
       if (!error && data) {
         const dbTasks = { ...initialTasks };
-        (data as any[]).forEach((row: any) => {
+        data.forEach((row) => {
           dbTasks[row.milestone_key] = row.completed;
         });
         setTasks(dbTasks);
@@ -62,13 +64,13 @@ export function MissionTimeline() {
 
   useEffect(() => {
     if (!user) {
-      setLoadingAI(false);
+      requestAnimationFrame(() => setLoadingAI(false));
       return;
     }
 
     const fetchRoadmapAI = async () => {
       const cacheKey = `ecoverse_roadmap_ai_${user.id}`;
-      const cached = safeGetStorageItem<any>(cacheKey, null);
+      const cached = safeGetStorageItem<{ data: AIRoadmapData; timestamp: number } | null>(cacheKey, null);
       const isDirty = safeGetStorageItem('ecoverse_cache_dirty', false);
 
       let shouldRegenerate = true;
@@ -231,7 +233,7 @@ export function MissionTimeline() {
               </div>
               <div className="mt-3 border-t border-white/5 pt-2.5">
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Motivation Summary</div>
-                <div className="mt-0.5 text-xs text-muted-foreground italic">"{aiRoadmap.motivationSummary}"</div>
+                <div className="mt-0.5 text-xs text-muted-foreground italic">&quot;{aiRoadmap.motivationSummary}&quot;</div>
               </div>
             </div>
           </div>

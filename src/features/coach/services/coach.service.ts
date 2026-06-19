@@ -8,7 +8,7 @@ export const coachService = {
     if (!userId) {
       return { data: null, error: new Error('User ID is required.') };
     }
-    const { data, error } = await (supabase.from('ai_conversations') as any)
+    const { data, error } = await supabase.from('ai_conversations')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: true });
@@ -22,7 +22,7 @@ export const coachService = {
     if (!userId || !role || !message) {
       return { data: null, error: new Error('User ID, role, and message are required.') };
     }
-    const { data, error } = await (supabase.from('ai_conversations') as any)
+    const { data, error } = await supabase.from('ai_conversations')
       .insert({
         user_id: userId,
         role,

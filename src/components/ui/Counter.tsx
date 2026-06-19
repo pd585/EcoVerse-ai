@@ -53,8 +53,10 @@ export function Counter({
   useEffect(() => {
     if (!inView) return;
     if (reduce) {
-      setDisplay(value);
-      prevValueRef.current = value;
+      requestAnimationFrame(() => {
+        setDisplay(value);
+        prevValueRef.current = value;
+      });
       return;
     }
     const startVal = prevValueRef.current;

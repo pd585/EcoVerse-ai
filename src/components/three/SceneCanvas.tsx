@@ -216,12 +216,15 @@ export function SceneCanvas({
   enableShadows,
 }: SceneCanvasProps) {
   const [isMounted, setIsMounted] = useState(false);
-  const webGLSupported = useRef<boolean | null>(null);
+  const [webGLSupported, setWebGLSupported] = useState<boolean | null>(null);
   const isMobile = useMediaQuery('(max-width: 767px)');
 
   useEffect(() => {
-    webGLSupported.current = supportsWebGL();
-    setIsMounted(true);
+    const supported = supportsWebGL();
+    requestAnimationFrame(() => {
+      setWebGLSupported(supported);
+      setIsMounted(true);
+    });
   }, []);
 
   // Disable shadows entirely on mobile; desktop respects explicit prop → config flag → APP_CONFIG
@@ -236,7 +239,7 @@ export function SceneCanvas({
       style={{ width: '100%', height: '100%', position: 'relative' }}
     >
       {isMounted ? (
-        webGLSupported.current ? (
+        webGLSupported ? (
           <InnerCanvas
             config={config}
             cameraConfig={cameraConfig}

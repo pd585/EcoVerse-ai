@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { safeGetStorageItem, safeSetStorageItem } from '@/lib/storage-safety';
 import type { Database } from '@/types/database/database.types';
-import type { User } from '@supabase/supabase-js';
+import { SupabaseClient, type User } from '@supabase/supabase-js';
 
 // Table Row Types from our schema
 export interface ProfileRow {
@@ -55,22 +55,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [theme, setThemeState] = useState<'ecoverse' | 'light' | 'dark' | 'system'>('ecoverse');
-
-  // Load initial theme on mount
-  useEffect(() => {
-    const savedPreferences = safeGetStorageItem<any>('ecoverse_preferences', null);
-    let initialTheme: 'ecoverse' | 'light' | 'dark' | 'system' = 'ecoverse';
-    if (savedPreferences && savedPreferences.theme) {
-      // Map old dark mode preference to ecoverse (aurora branded)
-      if (savedPreferences.theme === 'dark') {
-        initialTheme = 'ecoverse';
-      } else {
-        initialTheme = savedPreferences.theme;
+  const [theme, setThemeState] = useState<'ecoverse' | 'light' | 'dark' | 'system'>(() => {
+    if (typeof window !== 'undefined') {
+      const savedPreferences = safeGetStorageItem<{ theme?: 'ecoverse' | 'light' | 'dark' | 'system' } | null>('ecoverse_preferences', null);
+      if (savedPreferences && savedPreferences.theme) {
+        return savedPreferences.theme === 'dark' ? 'ecoverse' : savedPreferences.theme;
       }
     }
-    setThemeState(initialTheme);
-  }, []);
+    return 'ecoverse';
+  });
 
   // Update theme and save preferences to localStorage
   const setTheme = (newTheme: 'ecoverse' | 'light' | 'dark' | 'system') => {
@@ -156,16 +149,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           metadata.full_name || metadata.name || email.split('@')[0] || 'user';
         const avatarUrl = metadata.avatar_url || metadata.picture || null;
 
-        const profileInsert = {
-          id: userId,
-          email,
-          username: fallbackUsername,
-          avatar_url: avatarUrl,
-        } as Database['public']['Tables']['profiles']['Insert'];
-
-        const { data: createdProfile, error: createProfileErr } = await (supabase
-          .from('profiles') as any)
-          .insert(profileInsert)
+        const { data: createdProfile, error: createProfileErr } = await (supabase as SupabaseClient<Database>)
+          .from('profiles')
+          .insert({
+            id: userId,
+            email,
+            username: fallbackUsername,
+            avatar_url: avatarUrl,
+          })
           .select('*')
           .single();
 

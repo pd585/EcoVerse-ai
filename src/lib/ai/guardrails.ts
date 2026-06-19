@@ -53,35 +53,76 @@ export const DEFAULT_GUARDRAILS: GuardrailConfig = {
   filterPersonalData: true,
 };
 
-/**
- * Validates user input against guardrail configuration.
- * @param input - The user's message text
- * @param config - Guardrail configuration to apply
- * @returns Validation result
- */
 export function validateInput(
-  _input: string,
-  _config: GuardrailConfig = DEFAULT_GUARDRAILS
+  input: string,
+  config: GuardrailConfig = DEFAULT_GUARDRAILS
 ): GuardrailResult {
-  // Implementation placeholder
-  // Will check:
-  // - Input against blocked topics
-  // - Input length limits
-  // - Personal data patterns
-  // - Injection attack patterns
+  if (!input) {
+    return { isAllowed: false, reason: 'Input cannot be empty.' };
+  }
+
+  // 1. Length check
+  if (input.length > 5000) {
+    return { isAllowed: false, reason: 'Input length exceeds safe limits.' };
+  }
+
+  const normalized = input.toLowerCase();
+
+  // 2. Prompt injection detection
+  const injectionPatterns = [
+    'ignore previous instructions',
+    'bypass system instructions',
+    'reveal your system prompt',
+    'show your instructions',
+    'ignore above instructions',
+    'system prompt override',
+  ];
+
+  if (injectionPatterns.some(pattern => normalized.includes(pattern))) {
+    return {
+      isAllowed: false,
+      reason: 'Potential prompt injection attempt detected.',
+    };
+  }
+
+  // 3. Blocked topics check
+  for (const topic of config.blockedTopics) {
+    if (normalized.includes(topic)) {
+      return {
+        isAllowed: false,
+        reason: `Topic not permitted: ${topic}.`,
+      };
+    }
+  }
+
   return { isAllowed: true };
 }
 
-/**
- * Validates AI output against guardrail configuration.
- * @param output - The AI's response text
- * @param config - Guardrail configuration to apply
- * @returns Validation result with potentially filtered content
- */
 export function validateOutput(
-  _output: string,
-  _config: GuardrailConfig = DEFAULT_GUARDRAILS
+  output: string,
+  config: GuardrailConfig = DEFAULT_GUARDRAILS
 ): GuardrailResult {
-  // Implementation placeholder
+  if (!output) {
+    return { isAllowed: false, reason: 'Response is empty.' };
+  }
+
+  if (output.length > config.maxResponseLength) {
+    return {
+      isAllowed: false,
+      reason: 'Response length exceeds permitted limit.',
+      filteredContent: output.substring(0, config.maxResponseLength) + '...',
+    };
+  }
+
+  const normalized = output.toLowerCase();
+  for (const topic of config.blockedTopics) {
+    if (normalized.includes(topic)) {
+      return {
+        isAllowed: false,
+        reason: `Response contains blocked topic: ${topic}.`,
+      };
+    }
+  }
+
   return { isAllowed: true };
 }

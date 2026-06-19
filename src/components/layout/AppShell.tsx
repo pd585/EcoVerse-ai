@@ -28,6 +28,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from './AuthProvider';
 import { motion } from 'framer-motion';
 import { PageHeader } from './PageHeader';
+import { type PersonalityId } from '@/features/assessment/utils/personality';
 
 const NAV = [
   { href: ROUTES.DASHBOARD.OVERVIEW, label: 'Dashboard', icon: LayoutDashboard },
@@ -49,7 +50,7 @@ export function AppShell({ children, title, subtitle }: AppShellProps) {
   const { profile, signOut } = useAuth();
 
   const username = profile?.username || 'Green Guardian';
-  const personality = (profile?.avatar_url as any) || 'greenGuardian';
+  const personality = (profile?.avatar_url as PersonalityId) || 'greenGuardian';
 
   return (
     <div className="relative min-h-dvh pt-3 sm:pt-4 lg:pt-5">

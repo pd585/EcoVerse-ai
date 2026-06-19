@@ -230,7 +230,7 @@ export function EcosystemWorld({
       ring1Dash: r1Dash,
       ring2Dash: r2Dash,
     };
-  }, [isHealthy, health, isStage1, isStage2, isStage3, isStage4, isStage5, transitioning, hasSolar, hasFlights]);
+  }, [isHealthy, isStage1, isStage2, isStage3, isStage4, isStage5, transitioning, hasSolar]);
 
   // Wobble animation for Stressed Earth
   const stressedWobble = {

@@ -104,7 +104,6 @@ function getClientIP(req: NextRequest): string {
   return (
     req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     req.headers.get('x-real-ip') ||
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (req as any).ip ||
     'unknown'
   );
