@@ -298,9 +298,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (pathname === '/auth/login' || pathname === '/auth/register') {
-        // Redirect authenticated users trying to access auth pages to dashboard overview
-        router.push('/dashboard/overview');
+      if (pathname === '/' || pathname === '/auth/login' || pathname === '/auth/register') {
+        // Redirect authenticated users away from landing/auth pages based on onboarding status
+        if (carbonProfile) {
+          router.push('/dashboard/overview');
+        } else {
+          router.push('/assessment/questions');
+        }
         return;
       }
 
