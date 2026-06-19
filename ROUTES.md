@@ -1,10 +1,10 @@
-# EcoVerse AI — Route Structure Documentation
+# 🌿 EcoVerse AI — Route Structure Documentation
 
-This document maps out the Next.js App Router folder structure and centralized application routes defined in the EcoVerse AI frontend architecture.
+This document maps out the Next.js App Router folder structure, centralized application routes, and middleware/rate-limiting guardrails defined in the EcoVerse AI frontend architecture.
 
-## Centralized Routes Configuration
+## Centralized Frontend Routes
 
-Application routes are centrally defined in `src/constants/routes.ts` to prevent magic strings and enforce type-safety.
+Application routes are centrally defined in `src/constants/routes.ts` to prevent magic strings and enforce type safety.
 
 | Constant Name | Route Path | Feature Module | Description |
 | :--- | :--- | :--- | :--- |
@@ -28,15 +28,55 @@ Application routes are centrally defined in `src/constants/routes.ts` to prevent
 | `ROUTES.ROADMAP.ROOT` | `/roadmap` | `roadmap` | User's action plan / milestones list |
 | `ROUTES.ROADMAP.MILESTONE(id)` | `/roadmap/[id]` | `roadmap` | Action detail and completion guidelines |
 
+---
+
+## Centralized API Routes
+
+All server-side endpoints are located inside `src/app/api` and handle structured validations.
+
+| Route Endpoint | HTTP Method | Protected | Feature Module | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `/api/ai/chat` | `POST` | Yes | `coach` / `dashboard` | LLM Proxy for Coach replies and carbon recommendations. Protected via bearer tokens. |
+
+---
+
+## Route Guarding & Middleware (Implemented)
+
+Authentication session states are managed using Supabase client cookies. Protection boundaries are enforced as follows:
+
+*   **Public Routes**: `/`, `/auth/*`
+    *   Accessible by unauthenticated users.
+*   **Protected Routes**: `/dashboard/*`, `/assessment/*`, `/learn/*`, `/simulator/*`, `/coach/*`, `/roadmap/*`
+    *   Access is governed by authentication session states. Users without session cookies are automatically redirected to `/auth/login`.
+
+### Distributed Rate Limiting
+
+The application uses Next.js Edge Middleware (`middleware.ts`) to intercept all requests matching `/api/:path*`. Rate limits are checked via **Upstash Redis** (with an in-memory sliding-window bucket algorithm fallback if Redis is unavailable).
+
+*   **Authentication API (`/api/auth/*`)**:
+    *   Limit: 5 requests / 15 minutes per IP.
+*   **AI Chat API (`/api/ai/*`)**:
+    *   Limit: 10 requests / minute per user identifier (JWT user ID) or IP fallback.
+*   **General API (`/api/*`)**:
+    *   Limit: 60 requests / minute per user/IP.
+
+If a rate limit is exceeded, the server returns a `429 Too Many Requests` status, with standard `Retry-After`, `X-RateLimit-Limit`, and `X-RateLimit-Reset` headers.
+
+---
+
 ## Next.js App Router Directory Structure
 
-The Next.js App Router folders inside `src/app` should align with the routing map as follows:
+The Next.js App Router folders inside `src/app` align with the routing map:
 
 ```
 src/app/
-├── layout.tsx                      # Root Layout
+├── layout.tsx                      # Root Layout (AuthProvider, Theme)
 ├── page.tsx                        # Home / Intro Page
 ├── globals.css                     # Global styles
+├── api/
+│   └── ai/
+│       └── chat/
+│           └── route.ts            # POST /api/ai/chat
 ├── auth/
 │   ├── layout.tsx                  # Auth sub-layout
 │   ├── login/
@@ -82,8 +122,3 @@ src/app/
     │   └── page.tsx                # /roadmap/[milestoneId]
     └── layout.tsx
 ```
-
-## Route Guarding & Middleware (Future Architecture)
-- **Public Routes**: `/`, `/auth/*`
-- **Protected Routes**: `/dashboard/*`, `/assessment/*`, `/learn/*`, `/simulator/*`, `/coach/*`, `/roadmap/*`
-  - Access is governed by authentication session states. Users without session cookies are automatically redirected to `/auth/login`.

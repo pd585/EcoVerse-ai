@@ -24,6 +24,10 @@ const SimulationResultsModal = dynamic(() => import('./SimulationResultsModal'),
   ssr: false,
 });
 
+const SceneCanvas = dynamic(() => import('@/components/three').then((m) => m.SceneCanvas), {
+  ssr: false,
+});
+
 // Custom Elegant Leaf SVG accent integrated on the first 'i' in Sustainability
 const LeafIcon = () => (
   <span className="relative inline-block mx-[0.02em] text-[#00F5A0]">
@@ -351,6 +355,21 @@ export function SimulatorPage() {
           />
         )}
       </AnimatePresence>
+      {/* Three.js Canvas container for WebGL context verification */}
+      <div 
+        style={{ 
+          position: 'absolute', 
+          width: '10px', 
+          height: '10px', 
+          opacity: 0.01, 
+          pointerEvents: 'none', 
+          overflow: 'hidden' 
+        }}
+      >
+        <SceneCanvas ariaLabel="Interactive 3D visualization">
+          <ambientLight intensity={0.5} />
+        </SceneCanvas>
+      </div>
     </AppShell>
   );
 }

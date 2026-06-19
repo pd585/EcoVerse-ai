@@ -28,6 +28,8 @@ export default defineConfig({
         'src/lib/security.ts',
         'src/lib/ai/guardrails.ts',
         'src/lib/ai/systemPrompt.ts',
+        'src/lib/rateLimit.ts',
+        'src/middleware.ts',
       ],
     },
     alias: {
