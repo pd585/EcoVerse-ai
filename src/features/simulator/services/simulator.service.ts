@@ -14,6 +14,7 @@ export const simulatorService = {
     if (!userId) {
       return { data: null, error: new Error('User ID is required.') };
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase.from('simulator_runs') as any)
       .insert({
         user_id: userId,
@@ -34,6 +35,7 @@ export const simulatorService = {
     if (!userId) {
       return { data: null, error: new Error('User ID is required.') };
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase.from('simulator_runs') as any)
       .select('*')
       .eq('user_id', userId)

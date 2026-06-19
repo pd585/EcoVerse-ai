@@ -8,6 +8,7 @@ export const carbonService = {
     if (!userId) {
       return { data: null, error: new Error('User ID is required.') };
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase.from('carbon_profiles') as any)
       .select('*')
       .eq('user_id', userId)
@@ -25,6 +26,7 @@ export const carbonService = {
     if (!userId) {
       return { data: null, error: new Error('User ID is required.') };
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase.from('carbon_profiles') as any)
       .insert({
         user_id: userId,

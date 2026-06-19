@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, RotateCcw, Sparkles, X } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -74,18 +74,18 @@ export function SimulatorPage() {
 
   const baselineScore = carbonProfile?.carbon_score != null ? Number(carbonProfile.carbon_score) : mockCarbonScore.value;
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     if (user) {
       const { data, error } = await simulatorService.getHistory(user.id);
       if (!error && data) {
         setHistory(data);
       }
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchHistory();
-  }, [user]);
+  }, [fetchHistory]);
 
   const toggle = (id: string) => {
     setIsTransitioning(true);

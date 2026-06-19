@@ -3,10 +3,9 @@
  * Enables components to adapt based on viewport size.
  * @module hooks/useMediaQuery
  */
-
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore } from 'react';
 
 /**
  * Subscribes to a CSS media query and returns whether it currently matches.
@@ -20,19 +19,22 @@ import { useState, useEffect } from 'react';
  * ```
  */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState<boolean>(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(query);
-    setMatches(mediaQuery.matches);
-
-    const handler = (event: MediaQueryListEvent) => {
-      setMatches(event.matches);
-    };
-
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
-  }, [query]);
-
-  return matches;
+  return useSyncExternalStore(
+    (callback) => {
+      if (typeof window === 'undefined') {
+        return () => {};
+      }
+      const mediaQuery = window.document.defaultView 
+        ? window.document.defaultView.matchMedia(query) 
+        : window.matchMedia(query);
+      
+      mediaQuery.addEventListener('change', callback);
+      return () => mediaQuery.removeEventListener('change', callback);
+    },
+    () => {
+      if (typeof window === 'undefined') return false;
+      return window.matchMedia(query).matches;
+    },
+    () => false
+  );
 }

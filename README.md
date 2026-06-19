@@ -112,6 +112,37 @@ graph TD
 
 ---
 
+## 🧪 Testing
+
+EcoVerse AI is equipped with a robust unit testing suite using **Vitest** and **React Testing Library** configured with a virtual DOM (`jsdom`) environment.
+
+### Run Unit Tests
+```bash
+npm run test
+```
+
+### Run Coverage Reports
+```bash
+npm run test:coverage
+```
+
+The test suite covers:
+- Core Carbon Profile calculations and answers mapping utilities
+- AI Coach daily tip fallbacks and message database syncs
+- 3D simulator run state fetchers
+- Dashboard carbon data aggregates
+
+---
+
+## 🔮 Future Roadmap
+
+*   **Offline First Mode**: Introduce full IndexedDB capabilities to support learning modules and carbon calculations while completely disconnected.
+*   **IoT Smart-Meter Integrations**: Allow direct integrations with household smart meters (e.g., Nest, ecobee) for automatic energy consumption tracking.
+*   **Localized Emission Factors**: Utilize regional electricity grid emission factors to improve calculation accuracy.
+*   **Multiplayer Team Challenges**: Enable community-level carbon reduction challenges and leaderboards.
+
+---
+
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
